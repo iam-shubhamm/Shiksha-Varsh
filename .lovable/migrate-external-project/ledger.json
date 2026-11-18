@@ -1,0 +1,30 @@
+[
+  {
+    "capability": "class1-class2-learning",
+    "source": "Uploaded Class 1 and 2 ZIPs",
+    "outcome": "Board selection, lectures, practice, printable notes, quizzes, isolated local progress",
+    "status": "verified",
+    "next_action": null
+  },
+  {
+    "capability": "class3-learning",
+    "source": "Uploaded Class 3 ZIP",
+    "outcome": "Boards, subjects, chapters, printable notes and three quiz levels",
+    "status": "verified",
+    "next_action": null
+  },
+  {
+    "capability": "class3-video-search",
+    "source": "Class 3 video.functions.ts",
+    "outcome": "Preserve public YouTube search with timeout and fallback",
+    "status": "verified",
+    "next_action": null
+  },
+  {
+    "capability": "existing-app",
+    "source": "Current ShikshaVerse",
+    "outcome": "Keep homepage, theme, auth and help unchanged",
+    "status": "verified",
+    "next_action": null
+  }
+]
