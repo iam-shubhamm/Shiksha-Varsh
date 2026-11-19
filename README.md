@@ -36,7 +36,6 @@ ShikshaVerse is a full-stack React and TypeScript application built with **TanSt
 | Backend and database | Supabase, PostgreSQL |
 | Authentication | Supabase Auth |
 | Validation | Zod |
-| AI-generated content | Lovable AI gateway |
 | Build tooling | Vite, Nitro |
 | Testing | Vitest, Testing Library |
 | Database tooling | Drizzle Kit/ORM and SQL migrations |
@@ -57,14 +56,7 @@ React + TanStack Router + TanStack Query
 TanStack server functions     Supabase client
   |                              |
   +--------------+---------------+
-                 |
-       +---------+---------+
-       |                   |
-       v                   v
- Lovable AI gateway   Supabase / PostgreSQL
- chapter generation,  auth, help requests,
- translation and      chapter-pack cache,
- language checks      lesson-video cache
+                 
 ```
 
 ### Main application areas
@@ -129,9 +121,7 @@ Create a local `.env` file in the project root. The technical audit identified t
 | `VITE_SUPABASE_URL` | Supabase URL exposed to the Vite client configuration |
 | `VITE_SUPABASE_PUBLISHABLE_KEY` | Publishable key used by the browser client |
 | `SUPABASE_SERVICE_ROLE_KEY` | Privileged server-only Supabase key; never expose it to browser code |
-| `LOVABLE_DB_MIGRATION_URL` | Database connection used by Drizzle migration tooling |
-| `LOVABLE_CRON_SECRET` | Cron-related secret referenced by the project |
-| `LOVABLE_CRON_SECRET_PREVIOUS` | Previous cron secret referenced by the project |
+
 
 Use the values from your own Supabase and deployment/provider dashboards. Do not commit `.env` or real credentials to Git.
 
@@ -146,10 +136,7 @@ VITE_SUPABASE_PUBLISHABLE_KEY=
 # Server-only. Never prefix this with VITE_.
 SUPABASE_SERVICE_ROLE_KEY=
 
-# Only needed for the corresponding migration/cron workflows.
-LOVABLE_DB_MIGRATION_URL=
-LOVABLE_CRON_SECRET=
-LOVABLE_CRON_SECRET_PREVIOUS=
+
 ```
 
 Only configure variables required by the code path and environment you are running. Keep service-role and other privileged secrets server-side.
