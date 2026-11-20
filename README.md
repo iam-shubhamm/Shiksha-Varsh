@@ -269,6 +269,6 @@ No license was confirmed in the supplied project documentation. Add a `LICENSE` 
 
 The detailed architecture and source-code audit is maintained separately in **Complete Project Technical Documentation**. It covers the technology stack, routes, server functions, API/RPC inventory, database, authentication, security findings, testing, deployment configuration, and implementation gaps.
 
----
+.
 
 **ShikshaVerse** — Learn, practice, and grow.
