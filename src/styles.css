@@ -35,27 +35,27 @@
 
 :root {
   --radius: 0.5rem;
-  --background: oklch(0.985 0 0);
-  --foreground: oklch(0.2 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.2 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.2 0 0);
-  --primary: oklch(0.52 0.17 250);
+  --background: #FFFFFF;
+  --foreground: #34152A;
+  --card: #FFFFFF;
+  --card-foreground: #34152A;
+  --popover: #FFFFFF;
+  --popover-foreground: #34152A;
+  --primary: #FF5841;
   --primary-foreground: oklch(1 0 0);
-  --secondary: oklch(0.62 0.14 220);
-  --secondary-foreground: oklch(0.99 0 0);
-  --muted: oklch(0.95 0 0);
-  --muted-foreground: oklch(0.46 0 0);
-  --accent: oklch(0.94 0.045 230);
-  --accent-foreground: oklch(0.2 0 0);
+  --secondary: #C53678;
+  --secondary-foreground: #FFFFFF;
+  --muted: #FFF4F1;
+  --muted-foreground: #7A4A61;
+  --accent: #FFE8E3;
+  --accent-foreground: #34152A;
   --destructive: oklch(0.58 0.22 27);
-  --border: oklch(0.88 0 0);
-  --input: oklch(0.88 0 0);
+  --border: #F1D8DD;
+  --input: #F1D8DD;
   --ring: var(--primary);
   --success: oklch(0.49 0.12 145);
-  --metal-deep: oklch(0.42 0.16 250);
-  --metal-light: oklch(0.68 0.13 220);
+  --metal-deep: #C53678;
+  --metal-light: #FF5841;
   --gradient-hero: linear-gradient(115deg, var(--metal-deep), var(--metal-light) 48%, var(--metal-deep));
   --shadow-3d: 0 16px 36px -18px color-mix(in oklab, var(--foreground) 25%, transparent);
   --shadow-orbit: 0 0 30px -12px color-mix(in oklab, var(--primary) 50%, transparent);
@@ -64,31 +64,32 @@
 
 .dark {
   color-scheme: dark;
-  --metal-deep: oklch(0.68 0.12 250);
-  --metal-light: oklch(0.82 0.09 220);
+  --metal-deep: #C53678;
+  --metal-light: #FF5841;
   --success: oklch(0.72 0.13 145);
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.97 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.97 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.97 0 0);
-  --primary: oklch(0.76 0.13 250);
-  --primary-foreground: oklch(0.16 0 0);
-  --secondary: oklch(0.78 0.11 220);
-  --secondary-foreground: oklch(0.16 0 0);
-  --muted: oklch(0.245 0 0);
-  --muted-foreground: oklch(0.73 0 0);
-  --accent: oklch(0.91 0.085 90);
-  --accent-foreground: oklch(0.16 0 0);
-  --border: oklch(1 0 0 / 12%);
-  --input: oklch(1 0 0 / 15%);
+  --background: #34152A;
+  --foreground: #FFFFFF;
+  --card: #4A1C3A;
+  --card-foreground: #FFFFFF;
+  --popover: #4A1C3A;
+  --popover-foreground: #FFFFFF;
+  --primary: #FF5841;
+  --primary-foreground: #FFFFFF;
+  --secondary: #C53678;
+  --secondary-foreground: #FFFFFF;
+  --muted: #3D1932;
+  --muted-foreground: #F1C8D6;
+  --accent: #56213F;
+  --accent-foreground: #FFFFFF;
+  --border: rgba(255, 255, 255, 0.14);
+  --input: rgba(255, 255, 255, 0.18);
   --ring: var(--primary);
   --shadow-3d: 0 14px 40px -18px color-mix(in oklab, var(--primary) 30%, transparent);
 }
 
 @layer base {
   * { border-color: var(--color-border); }
+  html { scroll-behavior: smooth; }
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
@@ -139,6 +140,40 @@
   from { opacity: 0; transform: translateY(30px) rotateX(20deg); }
   to { opacity: 1; transform: none; }
 }
+@keyframes scroll-reveal-up {
+  from { opacity: 0; transform: translateY(38px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes scroll-reveal-left {
+  from { opacity: 0; transform: translateX(-38px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+@keyframes scroll-reveal-right {
+  from { opacity: 0; transform: translateX(38px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+@keyframes scroll-reveal-scale {
+  from { opacity: 0; transform: scale(.94); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.scroll-reveal {
+  opacity: 0;
+  transition: none;
+  will-change: transform, opacity;
+}
+.scroll-reveal[data-direction="left"] { transform: translateX(-38px); }
+.scroll-reveal[data-direction="right"] { transform: translateX(38px); }
+.scroll-reveal[data-direction="scale"] { transform: scale(.94); }
+.scroll-reveal.is-visible {
+  opacity: 1;
+  transform: none;
+  animation: scroll-reveal-up .75s cubic-bezier(.2,.75,.25,1) both;
+  animation-delay: var(--reveal-delay, 0ms);
+}
+.scroll-reveal[data-direction="left"].is-visible { animation-name: scroll-reveal-left; }
+.scroll-reveal[data-direction="right"].is-visible { animation-name: scroll-reveal-right; }
+.scroll-reveal[data-direction="scale"].is-visible { animation-name: scroll-reveal-scale; }
 @keyframes orbit { to { transform: rotate(360deg); } }
 @keyframes orbit-counter { to { transform: rotate(-360deg); } }
 @keyframes bob {
@@ -210,6 +245,15 @@
 .class-decoration-2 { left: 12%; top: 65%; animation-delay: -2s; }
 .class-decoration-3 { right: 12%; top: 65%; animation-delay: -3s; }
 
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .scroll-reveal {
+    opacity: 1;
+    transform: none;
+  }
+  .scroll-reveal.is-visible { animation: none; }
+}
+
 @keyframes ai-robot-bob {
   0%, 100% { transform: translate(-50%, 0) rotate(-2deg); }
   50% { transform: translate(-50%, -3px) rotate(2deg); }
@@ -220,6 +264,33 @@
 }
 .ai-robot-head { animation: ai-robot-bob 2.4s ease-in-out infinite; }
 .ai-robot-eye { transform-origin: center; animation: ai-robot-blink 4s ease-in-out infinite; }
+.whis-floating { filter: drop-shadow(0 8px 10px rgba(17,20,57,.14)); animation: whis-bob 3s ease-in-out infinite; }
+.whis-bot { transform-origin: center bottom; }
+.whis-arm { transform-origin: 31px 81px; animation: whis-wave 2.8s ease-in-out infinite; }
+@keyframes shiksha-float {
+  0%, 100% { transform: translateY(0) rotate(-1deg); }
+  50% { transform: translateY(-7px) rotate(1deg); }
+}
+@keyframes shiksha-wave {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(-12deg); }
+}
+.shiksha-bot { transform-origin: center bottom; }
+.shiksha-arm { transform-origin: 44px 82px; animation: shiksha-wave 2.6s ease-in-out infinite; }
+.shiksha-floating { filter: drop-shadow(0 8px 12px rgba(197,54,120,.18)); animation: shiksha-float 3.2s ease-in-out infinite; }
+.robot-sensor { animation: robot-sensor 1.8s ease-in-out infinite alternate; }
+@keyframes robot-sensor {
+  from { opacity: .55; }
+  to { opacity: 1; }
+}
+@keyframes whis-bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+@keyframes whis-wave {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(-7deg); }
+}
 
 
 /* Class 4–10: motion matures with the grade */

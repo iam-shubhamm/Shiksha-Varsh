@@ -2,7 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { z } from "zod";
 import { Loader2, GraduationCap, PlayCircle, FileText, ListChecks } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
+import { isSupabaseConfigured, supabase } from "@/integrations/supabase/client";
 import { SiteHeader } from "@/components/SiteHeader";
 import { useT } from "@/lib/i18n";
 
@@ -41,6 +41,10 @@ function AuthPage() {
     if (!email.success) return setErr(t("eEmail"));
     if (mode !== "forgot" && (fd["password"] ?? "").length < 6) return setErr(t("pwMin"));
     if (mode === "signup" && !(fd["name"] ?? "").trim()) return setErr(t("eName"));
+    if (!isSupabaseConfigured()) {
+      setErr("Login is temporarily unavailable because authentication is not configured.");
+      return;
+    }
     setBusy(true);
     try {
       if (mode === "login") {

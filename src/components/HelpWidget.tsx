@@ -4,6 +4,42 @@ import { useT, type TKey } from "@/lib/i18n";
 
 type Msg = { from: "me" | "bot"; text: string } | { from: "bot"; key: TKey };
 
+function RobotAvatar({ className = "" }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 160 140" role="img" aria-label="Mechanical learning assistant robot">
+      <g className="shiksha-bot">
+        <ellipse cx="80" cy="126" rx="52" ry="7" fill="#111439" opacity=".12" />
+        <path d="M48 87h64l12 35H36l12-35Z" fill="#C53678" stroke="#111439" strokeWidth="4" strokeLinejoin="round" />
+        <rect x="48" y="96" width="64" height="20" rx="3" fill="#FFFFFF" opacity=".92" />
+        <path d="M56 96v20M104 96v20" stroke="#FF5841" strokeWidth="4" />
+        <rect x="44" y="28" width="72" height="58" rx="10" fill="#E9ECF6" stroke="#111439" strokeWidth="5" />
+        <path d="M80 28V15" stroke="#111439" strokeWidth="5" />
+        <circle cx="80" cy="12" r="6" fill="#FF5841" stroke="#111439" strokeWidth="3" />
+        <rect x="55" y="43" width="50" height="28" rx="5" fill="#111439" />
+        <rect x="61" y="49" width="38" height="16" rx="3" fill="#4E6DB5" />
+        <rect x="66" y="54" width="12" height="6" rx="2" fill="#FF5841" className="robot-sensor" />
+        <rect x="82" y="54" width="12" height="6" rx="2" fill="#FF5841" className="robot-sensor" />
+        <circle cx="80" cy="78" r="3" fill="#FF5841" />
+        <rect x="68" y="86" width="24" height="7" rx="3" fill="#FF5841" />
+        <g className="shiksha-arm">
+          <path d="M44 93l-18 4-8 17" fill="none" stroke="#111439" strokeWidth="10" strokeLinecap="round" strokeLinejoin="round" />
+          <path d="M44 93l-18 4-8 17" fill="none" stroke="#E9ECF6" strokeWidth="5" strokeLinecap="round" />
+          <circle cx="17" cy="116" r="7" fill="#FF5841" stroke="#111439" strokeWidth="3" />
+        </g>
+        <g>
+          <path d="M116 93l16 4 7 18" fill="none" stroke="#111439" strokeWidth="10" strokeLinecap="round" />
+          <path d="M116 93l16 4 7 18" fill="none" stroke="#E9ECF6" strokeWidth="5" strokeLinecap="round" />
+          <circle cx="140" cy="117" r="7" fill="#C53678" stroke="#111439" strokeWidth="3" />
+        </g>
+        <path d="M43 122h74" stroke="#111439" strokeWidth="5" strokeLinecap="round" />
+        <rect x="52" y="122" width="18" height="8" rx="2" fill="#111439" />
+        <rect x="90" y="122" width="18" height="8" rx="2" fill="#111439" />
+        <circle cx="80" cy="106" r="5" fill="#FFFFFF" stroke="#C53678" strokeWidth="3" />
+      </g>
+    </svg>
+  );
+}
+
 export function HelpWidget() {
   const { t } = useT();
   const [open, setOpen] = useState(false);
@@ -20,24 +56,18 @@ export function HelpWidget() {
   return (
     <>
       <button onClick={() => setOpen(!open)} aria-label="Open AI learning assistant"
-        className="fixed bottom-5 right-5 z-50 group grid h-16 w-16 place-items-center rounded-full border-2 border-primary/30 bg-card shadow-3d transition-transform hover:scale-105">
+        className="fixed bottom-5 right-5 z-50 grid h-20 w-20 place-items-center bg-transparent transition-transform hover:scale-105">
         {open ? <X className="h-6 w-6 text-primary" /> : (
-          <span className="relative block h-12 w-12" aria-hidden="true">
-            <span className="absolute left-1/2 top-0 h-2 w-1 -translate-x-1/2 rounded-full bg-primary" />
-            <span className="absolute left-1/2 top-1 h-2 w-2 -translate-x-1/2 rounded-full bg-secondary animate-pulse" />
-            <span className="ai-robot-head absolute left-1/2 top-3 h-8 w-10 -translate-x-1/2 rounded-[10px] border-2 border-primary bg-hero">
-              <span className="absolute left-1.5 top-2 h-2 w-2 rounded-full bg-card ai-robot-eye" />
-              <span className="absolute right-1.5 top-2 h-2 w-2 rounded-full bg-card ai-robot-eye" />
-              <span className="absolute bottom-1.5 left-1/2 h-1 w-4 -translate-x-1/2 rounded-full bg-card/90" />
-            </span>
-            <span className="absolute bottom-0 left-1/2 h-2 w-8 -translate-x-1/2 rounded-full bg-primary/20" />
-          </span>
+          <RobotAvatar className="h-18 w-18 shiksha-floating" />
         )}
       </button>
       {open && (
         <div className="animate-rise fixed bottom-20 right-5 z-50 flex h-[420px] w-[min(340px,calc(100vw-2.5rem))] flex-col overflow-hidden rounded-xl border bg-card shadow-3d">
           <div className="bg-hero p-3 text-primary-foreground">
-            <p className="font-display font-bold">{t("chatTitle")}</p>
+            <div className="flex items-center gap-2">
+              <RobotAvatar className="h-12 w-12 rounded-lg bg-white/90 p-0.5" />
+              <p className="font-display font-bold">{t("chatTitle")}</p>
+            </div>
             <div className="mt-2 flex gap-2 text-xs">
               {(["ai", "help"] as const).map((x) => (
                 <button key={x} onClick={() => setTab(x)} className={`rounded-full px-3 py-1 ${tab === x ? "bg-background text-foreground" : "bg-background/20"}`}>

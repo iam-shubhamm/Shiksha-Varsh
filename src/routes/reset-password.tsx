@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { Loader2 } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
+import { isSupabaseConfigured, supabase } from "@/integrations/supabase/client";
 import { SiteHeader } from "@/components/SiteHeader";
 import { useT } from "@/lib/i18n";
 
@@ -30,6 +30,7 @@ function ResetPassword() {
   async function save(e: React.FormEvent) {
     e.preventDefault();
     if (pw.length < 6) return setMsg(t("pwMin"));
+    if (!isSupabaseConfigured()) return setMsg("Password reset is temporarily unavailable because authentication is not configured.");
     setBusy(true);
     const { error } = await supabase.auth.updateUser({ password: pw });
     setBusy(false);

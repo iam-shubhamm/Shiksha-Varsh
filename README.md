@@ -93,7 +93,7 @@ The source uses file-based route modules; the parameterized paths above are show
 
 - Node.js and npm (or Bun, if you prefer the repository's Bun lockfile workflow).
 - A Supabase project for database and authentication features.
-- The required AI gateway configuration if you want AI-generated chapter content and translation to work.
+- Optional provider-neutral AI configuration if you want AI-generated chapter content and translation to work.
 
 ### 1. Clone the repository
 
@@ -140,6 +140,16 @@ SUPABASE_SERVICE_ROLE_KEY=
 ```
 
 Only configure variables required by the code path and environment you are running. Keep service-role and other privileged secrets server-side.
+
+Optional provider-neutral AI integration variables:
+
+| Variable | Purpose |
+|---|---|
+| `AI_API_URL` | Base URL for an OpenAI-compatible `/chat/completions` endpoint |
+| `AI_API_KEY` | Server-only API key for that provider |
+| `AI_MODEL` | Model identifier sent by the app |
+
+If these variables are unset, chapter packs use local revision fallbacks, translations keep the original text, and video filtering uses the existing metadata and language checks.
 
 ### 4. Configure Supabase
 
@@ -220,7 +230,7 @@ The repository configuration indicates Cloudflare as the intended deployment tar
 The following distinctions are important when evaluating the project:
 
 - The core course routes, static curriculum navigation, chapter UI, quiz logic, print workflow, authentication flows, help form, and automated tests are implemented in the audited source.
-- Chapter packs and translated text can be generated through TanStack server functions and the Lovable AI gateway.
+- Chapter packs and translated text can be generated through TanStack server functions and an optional OpenAI-compatible AI endpoint.
 - The help widget uses scripted local responses; a real AI chat assistant is not wired up.
 - Lecture discovery currently parses YouTube search HTML. This is not a stable official API integration and may break if the external page changes.
 - Supabase tables, authentication, migrations, and Cloudflare deployment are configured in the codebase but were not verified against live services.

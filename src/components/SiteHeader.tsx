@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { Moon, Sun, GraduationCap, Globe, ChevronDown, LogIn, LogOut, Menu, X } from "lucide-react";
 import { LANGS, useT, type Lang } from "@/lib/i18n";
-import { supabase } from "@/integrations/supabase/client";
+import { isSupabaseConfigured, supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 
 export function ThemeToggle() {
@@ -56,11 +56,13 @@ export function LangSelect() {
 function AuthButton() {
   const { t } = useT();
   const [email, setEmail] = useState<string | null>(null);
+  const configured = isSupabaseConfigured();
   useEffect(() => {
+    if (!configured) return;
     supabase.auth.getSession().then(({ data }) => setEmail(data.session?.user.email ?? null));
     const { data } = supabase.auth.onAuthStateChange((_e, s) => setEmail(s?.user.email ?? null));
     return () => data.subscription.unsubscribe();
-  }, []);
+  }, [configured]);
   if (email)
     return (
       <button onClick={() => supabase.auth.signOut()} title={email} className="inline-flex h-8 items-center gap-1.5 rounded-full border bg-card px-3 text-xs font-semibold hover:bg-muted">

@@ -1,5 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
-import { generateResponse } from "@lovable.dev/ai-gateway";
+import { generateAiText } from "@/lib/ai-client";
 import { getPrimarySubject } from "@/data/primary-curriculum";
 import { getAdvancedCourse, getAdvancedSubject, getAdvancedTrack } from "@/data/advanced/curriculum";
 import { getUpperSubject, UPPER_BOARDS, type UpperBoard } from "@/data/upper/curriculum";
@@ -76,11 +76,11 @@ Return ONLY JSON: {"notes": string[], "quiz": [{"q": string, "options": [4 strin
 - quiz: exactly 15 MCQs — first 5 easy, next 5 medium, last 5 hard. One correct option each; vary the answer position.
 ${hindi ? "Write everything in Hindi (Devanagari)." : "Write in simple English."}`;
     try {
-      const res = await generateResponse({ model: "openai/gpt-6-astra", input: prompt });
-      let raw = "";
-      for (const item of (res.output ?? []) as Array<{ type: string; content?: Array<{ type: string; text?: string }> }>)
-        if (item.type === "message") for (const c of item.content ?? []) if (c.type === "output_text") raw += c.text ?? "";
-      const m = raw.match(/\{[\s\S]*\}/);
+      const raw = await generateAiText([
+        { role: "system", content: "You create accurate educational study material. Follow the user's JSON format exactly." },
+        { role: "user", content: prompt },
+      ]);
+      const m = raw?.match(/\{[\s\S]*\}/);
       const pack = m ? JSON.parse(m[0]) : null;
       if (!valid(pack)) return fallbackPack(title, hindi);
       const clean: ChapterPack = { notes: pack.notes.map(String), quiz: pack.quiz.slice(0, 15) };

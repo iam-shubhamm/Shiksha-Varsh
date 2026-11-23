@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { z } from "zod";
 import { CheckCircle2, Loader2, Send } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
+import { isSupabaseConfigured, supabase } from "@/integrations/supabase/client";
 import { useT } from "@/lib/i18n";
 
 const field = "w-full rounded-lg border bg-background px-3 py-2.5 text-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-ring/30";
@@ -25,6 +25,10 @@ export function HelpForm() {
     const fd = Object.fromEntries(new FormData(e.currentTarget)) as Record<string, string>;
     const parsed = schema.safeParse({ ...fd, phone: fd["phone"] || undefined });
     if (!parsed.success) return setError(parsed.error.issues[0]?.message ?? t("eMsg"));
+    if (!isSupabaseConfigured()) {
+      setStatus("idle");
+      return setError("Support requests are temporarily unavailable because the service is not configured.");
+    }
     setStatus("sending");
     const { error } = await supabase.from("help_requests").insert({ ...parsed.data, phone: parsed.data.phone ?? null });
     if (error) { setStatus("idle"); return setError(t("eFail")); }

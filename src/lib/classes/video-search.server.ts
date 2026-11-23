@@ -1,4 +1,4 @@
-import { generateResponse } from "@lovable.dev/ai-gateway";
+import { generateAiText } from "@/lib/ai-client";
 import { matchesLectureLanguage, type VideoCandidate } from "@/lib/classes/video-language";
 import { videoCacheKey, type VideoLang } from "@/lib/classes/lecture-queries";
 
@@ -42,10 +42,11 @@ export async function confirmSpoken(list: VideoCandidate[], lang: VideoLang): Pr
     : "spoken in Hindi (Hindi or Hindi-English mix narration). Reject videos narrated only in English or another language.";
   const prompt = `For each YouTube video decide if it is a lecture ${rule}\nIf unsure, reject. Return ONLY JSON {"keep": [videoIds in given order]}.\n${JSON.stringify(list.map(c => ({ id: c.id, title: c.title, channel: c.channel, snippet: c.snippet.slice(0, 160) })))}`;
   try {
-    const res = await generateResponse({ model: "openai/gpt-6-astra", input: prompt });
-    let raw = "";
-    for (const item of (res.output ?? []) as Array<{ type: string; content?: Array<{ type: string; text?: string }> }>)
-      if (item.type === "message") for (const c of item.content ?? []) if (c.type === "output_text") raw += c.text ?? "";
+    const raw = await generateAiText([
+      { role: "system", content: "You filter YouTube lecture candidates for spoken language." },
+      { role: "user", content: prompt },
+    ], { timeoutMs: 6000 });
+    if (!raw) return list.map(c => c.id);
     const keep = JSON.parse(raw.match(/\{[\s\S]*\}/)?.[0] ?? "null")?.keep;
     return Array.isArray(keep) ? keep.filter((id: unknown) => list.some(c => c.id === id)) : null;
   } catch (e) { console.error("video language check failed", e); return null; }

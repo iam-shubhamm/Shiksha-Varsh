@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { GraduationCap, BookOpen, School, PlayCircle, FileText, NotebookPen, ListChecks, Layers, Clock, Users, Award, ArrowRight, Mail, MessageSquare, ChevronDown, Atom, Calculator, FlaskConical, Languages, PenTool, Download, Youtube } from "lucide-react";
 import { COURSES, CLASS_WEBSITE_LINKS, UPPER_CLASS_GRADE, type Course } from "@/lib/edu-data";
 import { ADVANCED_COURSE_LINKS } from "@/data/advanced/curriculum";
@@ -80,6 +80,24 @@ function Faq() {
 function Index() {
   const { t, lang } = useT();
   const [toast, setToast] = useState("");
+  useEffect(() => {
+    const elements = Array.from(document.querySelectorAll<HTMLElement>("[data-reveal]"));
+    if (!elements.length) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      elements.forEach((element) => element.classList.add("is-visible"));
+      return;
+    }
+    elements.forEach((element) => element.classList.add("scroll-reveal"));
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        entry.target.classList.add("is-visible");
+        observer.unobserve(entry.target);
+      });
+    }, { threshold: 0.12, rootMargin: "0px 0px -8% 0px" });
+    elements.forEach((element) => observer.observe(element));
+    return () => observer.disconnect();
+  }, []);
   const pick = (c: Course) => {
     const url = c.link[lang] || c.link["en"];
     if (url) window.location.href = url;
@@ -101,7 +119,7 @@ function Index() {
       <section id="top" className="premium-hero relative flex min-h-[calc(100svh-3.5rem)] flex-col border-b border-primary/25">
         <FormulaRain />
         <div className="relative mx-auto grid w-full max-w-6xl flex-1 items-center gap-8 px-5 py-10 md:grid-cols-[1.3fr_1fr]">
-          <div className="animate-rise">
+          <div className="animate-rise" data-reveal data-direction="left">
             <span className="inline-flex items-center gap-2 border-b border-primary/40 pb-2 text-[11px] font-semibold text-primary"><GraduationCap className="h-3.5 w-3.5" />{t("badge")}</span>
             <h1 className="mt-4 text-4xl font-extrabold leading-[1.1] md:text-5xl">{t("heroA")} <span className="text-hero">{t("heroB")}</span></h1>
             <p className="mt-3 max-w-md text-base text-muted-foreground">{t("heroSub")}</p>
@@ -115,14 +133,14 @@ function Index() {
               ))}
             </div>
           </div>
-          <div className="grid place-items-center"><HeroScene /></div>
+          <div className="grid place-items-center" data-reveal data-direction="right"><HeroScene /></div>
         </div>
         <a href="#courses" className="relative mx-auto mb-6 flex flex-col items-center gap-1 text-xs text-muted-foreground hover:text-foreground">
           {t("scroll")} <ChevronDown className="h-4 w-4 animate-bounce" />
         </a>
       </section>
 
-      <section id="courses" className="scroll-mt-14 border-t bg-muted/40 py-14">
+      <section id="courses" className="scroll-mt-14 border-t bg-muted/40 py-14" data-reveal>
         <div className="mx-auto max-w-6xl px-5">
           <SectionHead eyebrow={t("coursesEyebrow")} title={t("coursesTitle")} />
           <CourseGroup title={t("gSchool")} icon={School} items={COURSES.filter((c) => c.group === "school")} onPick={pick} />
@@ -131,12 +149,12 @@ function Index() {
         </div>
       </section>
 
-      <section id="features" className="scroll-mt-14 py-14">
+      <section id="features" className="scroll-mt-14 py-14" data-reveal>
         <div className="mx-auto max-w-6xl px-5">
           <SectionHead eyebrow={t("whyEyebrow")} title={t("whyTitle")} />
           <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
             {features.map(([Icon, a, b], i) => (
-              <div key={a} className="animate-rise card-3d rounded-lg border bg-card p-4 hover:-translate-y-1" style={{ animationDelay: `${i * 0.05}s` }}>
+              <div key={a} className="card-3d rounded-lg border bg-card p-4 hover:-translate-y-1" data-reveal data-direction="scale" style={{ ["--reveal-delay" as string]: `${i * 70}ms` }}>
                 <span className="grid h-9 w-9 place-items-center rounded-lg bg-secondary/10 text-secondary"><Icon className="h-5 w-5" /></span>
                 <h3 className="mt-3 font-bold">{t(a)}</h3>
                 <p className="mt-0.5 text-sm text-muted-foreground">{t(b)}</p>
@@ -146,7 +164,7 @@ function Index() {
         </div>
       </section>
 
-      <section id="material" className="scroll-mt-14 border-t bg-muted/40 py-14">
+      <section id="material" className="scroll-mt-14 border-t bg-muted/40 py-14" data-reveal>
         <div className="mx-auto grid max-w-6xl items-center gap-8 px-5">
           <div>
             <SectionHead eyebrow={t("matEyebrow")} title={t("matTitle")} sub={t("matSub")} />
@@ -163,12 +181,12 @@ function Index() {
         <div className="mx-auto mt-8 max-w-6xl px-5"><LessonDemo /></div>
       </section>
 
-      <section id="how" className="scroll-mt-14 py-14">
+      <section id="how" className="scroll-mt-14 py-14" data-reveal>
         <div className="mx-auto max-w-6xl px-5">
           <SectionHead eyebrow={t("howEyebrow")} title={t("howTitle")} />
           <div className="mt-6 grid gap-3 md:grid-cols-3">
             {(["h1", "h2", "h3"] as const).map((k, i) => (
-              <div key={k} className="animate-rise relative rounded-lg border bg-card p-5" style={{ animationDelay: `${i * 0.1}s` }}>
+              <div key={k} className="relative rounded-lg border bg-card p-5" data-reveal data-direction="scale" style={{ ["--reveal-delay" as string]: `${i * 100}ms` }}>
                 <span className="font-display text-4xl font-extrabold text-hero">0{i + 1}</span>
                 <h3 className="mt-2 font-bold">{t(k)}</h3>
                 <p className="mt-0.5 text-sm text-muted-foreground">{t(`${k}d` as TKey)}</p>
@@ -178,7 +196,7 @@ function Index() {
         </div>
       </section>
 
-      <section id="help" className="scroll-mt-14 border-t bg-muted/40 py-14">
+      <section id="help" className="scroll-mt-14 border-t bg-muted/40 py-14" data-reveal>
         <div className="mx-auto grid max-w-6xl gap-8 px-5 md:grid-cols-[1fr_1.3fr]">
           <div>
             <SectionHead eyebrow={t("helpEyebrow")} title={t("helpTitle")} sub={t("helpSub")} />
