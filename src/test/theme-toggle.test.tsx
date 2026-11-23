@@ -3,7 +3,10 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { ThemeToggle } from "@/components/SiteHeader";
 
 vi.mock("@/lib/i18n", () => ({ useT: () => ({ t: (key: string) => key }) }));
-vi.mock("@/integrations/supabase/client", () => ({ supabase: {} }));
+vi.mock("@/integrations/supabase/client", () => ({
+  supabase: {},
+  isSupabaseConfigured: () => false,
+}));
 
 afterEach(() => {
   cleanup();
@@ -12,6 +15,11 @@ afterEach(() => {
 });
 
 describe("Theme selection", () => {
+  it("defaults to Dark Mode when no preference is saved", () => {
+    render(<ThemeToggle />);
+    expect(document.documentElement).toHaveClass("dark");
+    expect(screen.getByRole("button", { name: "dark" })).toHaveAttribute("aria-pressed", "true");
+  });
   it("keeps saved Dark Mode when another header mounts", () => {
     localStorage.setItem("theme", "dark");
     const first = render(<ThemeToggle />);
