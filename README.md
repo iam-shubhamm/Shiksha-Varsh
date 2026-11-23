@@ -213,7 +213,7 @@ These are results from the audit snapshot; run the tests and build again against
 
 ## Deployment
 
-The project is configured to generate a **Cloudflare-module Nitro** output. The build produces public assets and server output under `.output`.
+The project is configured to generate a **Vercel Nitro** deployment in `.vercel/output`.
 
 Build locally:
 
@@ -221,7 +221,7 @@ Build locally:
 npm run build
 ```
 
-The repository configuration indicates Cloudflare as the intended deployment target. Complete the deployment using the Cloudflare workflow appropriate to the current project configuration, and set the required environment variables in the hosting dashboard.
+Deploy the repository to Vercel. Vercel will run `npm run build`; the Nitro Vercel preset creates the server functions and static assets in `.vercel/output`. Set the required environment variables in the Vercel Project Settings.
 
 **Deployment status is not confirmed by the source audit.** No live URL, deployment log, or CI/CD workflow was found in the audited workspace. Supabase live availability and migration status were also not verified.
 
