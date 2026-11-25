@@ -6,4 +6,37 @@ import { getDegreeSemesters, getSemesterSubjects } from "@/data/advanced/semeste
 import { AdvancedSubjects } from "@/components/AdvancedSubjects";
 import { ArrowUpRight } from "lucide-react";
 export const Route = createFileRoute("/learn/$course/$track/")({loader:({params})=>{const c=getAdvancedCourse(params.course),t=getAdvancedTrack(params.course,params.track);if(!c||!t)throw notFound();return {course:c,track:t};},head:({params})=>advancedHead(`${getAdvancedCourse(params.course)?.name} · ${getAdvancedTrack(params.course,params.track)?.name ?? "Subjects"}`,"Subject-wise lectures, audio notes, PDF study material and quizzes."),component:Page});
-function Page(){const {course,track}=Route.useLoaderData();const semesters=getDegreeSemesters(course.id,track.id);return <main className="mx-auto max-w-6xl px-5 pb-12 pt-5"><Link to="/learn/$course" params={{course:course.id}} preload="intent" className="text-sm font-semibold text-primary">← {course.name}</Link><div className="mt-6 flex items-center gap-4 border-b pb-6"><DisciplineMark motion={track.motion}/><div className="min-w-0"><p className="text-xs font-bold text-muted-foreground">{course.name}</p><h1 className="text-3xl font-bold">{track.name}</h1></div></div><h2 className="mb-5 mt-7 text-xl font-semibold">{semesters.length ? "Select your semester" : "Subjects"}</h2>{semesters.length ? <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">{semesters.map(semester=><Button asChild variant="plain" key={semester} className="group h-auto whitespace-normal rounded-lg border bg-card p-5 text-left hover:border-primary"><Link to="/learn/$course/$track/semesters/$semester" params={{course:course.id,track:track.id,semester:String(semester)}} preload="intent" className="flex flex-col items-start"><div className="flex w-full justify-between"><span className="font-mono text-primary">{String(semester).padStart(2,"0")}</span><ArrowUpRight className="h-4 w-4"/></div><h3 className="mt-3 text-xl font-bold">Semester {semester}</h3><p className="mt-2 text-xs font-normal text-muted-foreground">{getSemesterSubjects(course.id,track.id,semester).length} subjects</p></Link></Button>)}</div>:<AdvancedSubjects course={course} track={track} subjects={track.subjects}/>}</main>;}
+function Page() {
+  const { course, track } = Route.useLoaderData();
+  const semesters = getDegreeSemesters(course.id, track.id);
+
+  return (
+    <main className="mx-auto max-w-6xl px-5 pb-12 pt-5">
+      <Link to="/learn/$course" params={{ course: course.id }} preload="intent" className="text-sm font-semibold text-primary">
+        ← {course.name}
+      </Link>
+      <div className="mt-6 flex items-center gap-4 rounded-3xl border border-primary/10 bg-gradient-to-br from-card via-background to-accent/20 p-5 shadow-sm" data-reveal>
+        <DisciplineMark motion={track.motion} />
+        <div className="min-w-0">
+          <p className="text-xs font-bold text-muted-foreground">{course.name}</p>
+          <h1 className="text-3xl font-bold">{track.name}</h1>
+        </div>
+      </div>
+      <h2 className="mb-5 mt-7 text-xl font-semibold" data-reveal>{semesters.length ? "Select your semester" : "Subjects"}</h2>
+      {semesters.length ? (
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {semesters.map((semester, index) => (
+            <Button asChild variant="plain" key={semester} data-reveal data-direction="scale" style={{ ["--reveal-delay" as string]: `${index * 60}ms` }}
+              className="group h-auto whitespace-normal rounded-2xl border border-primary/10 bg-card/80 p-5 text-left shadow-sm transition hover:-translate-y-1 hover:border-primary hover:shadow-3d">
+              <Link to="/learn/$course/$track/semesters/$semester" params={{ course: course.id, track: track.id, semester: String(semester) }} preload="intent" className="flex flex-col items-start">
+                <div className="flex w-full justify-between"><span className="font-mono text-primary">{String(semester).padStart(2, "0")}</span><ArrowUpRight className="h-4 w-4" /></div>
+                <h3 className="mt-3 text-xl font-bold">Semester {semester}</h3>
+                <p className="mt-2 text-xs font-normal text-muted-foreground">{getSemesterSubjects(course.id, track.id, semester).length} subjects</p>
+              </Link>
+            </Button>
+          ))}
+        </div>
+      ) : <AdvancedSubjects course={course} track={track} subjects={track.subjects} />}
+    </main>
+  );
+}

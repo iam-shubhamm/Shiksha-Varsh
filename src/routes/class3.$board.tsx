@@ -33,11 +33,12 @@ function BoardPage() {
   return (
     <main className="h-auto whitespace-normal mx-auto max-w-6xl px-5 py-12">
       <Link to="/class3" className="h-auto whitespace-normal text-sm font-semibold text-primary">{t("allBoards")}</Link>
-      <h1 className="h-auto whitespace-normal mt-2 text-center font-display text-3xl font-extrabold text-primary">🎒 {t("classLabel")} Corner · {name}</h1>
-      <div className="h-auto whitespace-normal mt-10 grid gap-5 sm:grid-cols-2 md:grid-cols-3">
-        {board.subjects.map((s) => (
+      <h1 data-reveal className="h-auto whitespace-normal mt-3 rounded-3xl border border-primary/10 bg-gradient-to-r from-primary/10 via-accent/20 to-secondary/10 px-4 py-7 text-center font-display text-3xl font-extrabold text-primary">🎒 {t("classLabel")} Corner · {name}</h1>
+      <div className="h-auto whitespace-normal mt-8 grid gap-5 sm:grid-cols-2 md:grid-cols-3">
+        {board.subjects.map((s, i) => (
           <Link key={s.id} to="/class3/$board/$subject" params={{ board: board.id, subject: s.id }}
-             className="h-auto whitespace-normal rounded-lg border-2 border-border bg-card p-6 text-center shadow-pop transition hover:-translate-y-1 hover:border-primary">
+             data-reveal data-direction="scale" style={{ ["--reveal-delay" as string]: `${i * 70}ms` }}
+             className="h-auto whitespace-normal rounded-2xl border border-primary/10 bg-card/80 p-6 text-center shadow-sm transition hover:-translate-y-1 hover:border-primary hover:shadow-3d">
             <div className="class-cartoon-discover text-5xl">{s.emoji}</div>
             <h2 className="h-auto whitespace-normal mt-3 font-display text-2xl font-bold">{s.name}</h2>
             <p className="h-auto whitespace-normal text-sm text-muted-foreground">{s.chapters.length} {t("chapters")}</p>

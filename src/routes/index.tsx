@@ -6,7 +6,7 @@ import { ADVANCED_COURSE_LINKS } from "@/data/advanced/curriculum";
 import { Tilt } from "@/components/Tilt";
 import { HelpForm } from "@/components/HelpForm";
 import { SiteHeader } from "@/components/SiteHeader";
-import { HeroScene, FormulaRain } from "@/components/HeroScene";
+import { HeroScene } from "@/components/HeroScene";
 import { LessonDemo } from "@/components/LessonDemo";
 import { useT, type TKey } from "@/lib/i18n";
 
@@ -26,7 +26,7 @@ export const Route = createFileRoute("/")({
 
 function SectionHead({ eyebrow, title, sub }: { eyebrow: string; title: string; sub?: string }) {
   return (
-    <div className="max-w-2xl">
+    <div className="max-w-2xl" data-reveal data-direction="left">
       <p className="text-xs font-semibold uppercase tracking-wider text-primary">{eyebrow}</p>
       <h2 className="mt-1 text-2xl font-bold md:text-3xl">{title}</h2>
       {sub && <p className="mt-2 text-sm text-muted-foreground">{sub}</p>}
@@ -38,20 +38,30 @@ function CourseGroup({ title, icon: Icon, items, onPick }: { title: string; icon
   const { t } = useT();
   return (
     <div className="mt-8">
-      <div className="mb-3 flex items-center gap-2">
+      <div className="mb-3 flex items-center gap-2" data-reveal data-direction="left">
         <span className="grid h-8 w-8 place-items-center rounded-lg bg-primary/10 text-primary"><Icon className="h-4 w-4" /></span>
         <h3 className="text-lg font-bold">{title}</h3>
       </div>
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-6">
         {items.map((c, i) => (
-          <Tilt key={c.name} to={CLASS_WEBSITE_LINKS[c.name]} grade={UPPER_CLASS_GRADE[c.name]} course={ADVANCED_COURSE_LINKS[c.name]} onClick={() => onPick(c)} className="course-card group rounded-lg border bg-card p-3.5 text-left">
-            {c.fx.map((f, k) => (
-              <span key={k} aria-hidden="true" className="fx text-sm" style={{ left: `${8 + k * 13}%`, bottom: "8px", ["--d" as string]: `${k * 0.16}s`, ["--dx" as string]: `${(k % 2 ? 1 : -1) * (12 + k * 4)}px`, ["--rot" as string]: `${(k % 2 ? 1 : -1) * 20}deg` } as React.CSSProperties}>{f}</span>
-            ))}
-            <p className="relative font-display text-lg font-bold leading-tight transition group-hover:text-primary">{c.name}</p>
-            <p className="relative mt-0.5 truncate text-[11px] text-muted-foreground">{t(c.sub)}</p>
-            <span className="relative mt-2 inline-flex items-center gap-1 text-[11px] font-semibold text-primary">{t("start")} <ArrowRight className="h-3 w-3 transition group-hover:translate-x-1" /></span>
-          </Tilt>
+          <div key={c.name} data-reveal data-direction="scale" style={{ ["--reveal-delay" as string]: `${i * 55}ms` }}>
+            <Tilt to={CLASS_WEBSITE_LINKS[c.name]} grade={UPPER_CLASS_GRADE[c.name]} course={ADVANCED_COURSE_LINKS[c.name]} onClick={() => onPick(c)} className={`course-card course-card-tone-${i % 6} group rounded-2xl border p-4 text-left`}>
+              {c.fx.map((f, k) => (
+                <span key={k} aria-hidden="true" className="fx text-sm" style={{ left: `${8 + k * 13}%`, bottom: "8px", ["--d" as string]: `${k * 0.16}s`, ["--dx" as string]: `${(k % 2 ? 1 : -1) * (12 + k * 4)}px`, ["--rot" as string]: `${(k % 2 ? 1 : -1) * 20}deg` } as React.CSSProperties}>{f}</span>
+              ))}
+              <span aria-hidden="true" className="course-card-watermark">{c.name.startsWith("Class ") ? c.name.slice(6).padStart(2, "0") : c.name.replace(/[^a-z0-9]/gi, "").slice(0, 3)}</span>
+              <div className="relative z-10 flex min-h-32 flex-col">
+                <div className="flex items-center justify-between">
+                  <span aria-hidden="true" className="course-card-icon">{c.fx[0]}</span>
+                  <span className="course-card-chip">{t(c.sub)}</span>
+                </div>
+                <p className="mt-3 font-display text-lg font-bold leading-tight transition group-hover:text-primary">{c.name}</p>
+                <div className="mt-auto flex items-center justify-end pt-3">
+                  <span className="course-card-action">{t("start")} <ArrowRight className="h-4 w-4 transition group-hover:translate-x-1" /></span>
+                </div>
+              </div>
+            </Tilt>
+          </div>
         ))}
       </div>
     </div>
@@ -117,15 +127,14 @@ function Index() {
 
       {/* Front page: fills the whole first screen */}
       <section id="top" className="premium-hero relative flex min-h-[calc(100svh-3.5rem)] flex-col border-b border-primary/25">
-        <FormulaRain />
         <div className="relative mx-auto grid w-full max-w-6xl flex-1 items-center gap-8 px-5 py-10 md:grid-cols-[1.3fr_1fr]">
-          <div className="animate-rise" data-reveal data-direction="left">
+          <div className="animate-rise" data-reveal data-direction="left" style={{ ["--reveal-delay" as string]: "80ms" }}>
             <span className="inline-flex items-center gap-2 border-b border-primary/40 pb-2 text-[11px] font-semibold text-primary"><GraduationCap className="h-3.5 w-3.5" />{t("badge")}</span>
-            <h1 className="mt-4 text-4xl font-extrabold leading-[1.1] md:text-5xl">{t("heroA")} <span className="text-hero">{t("heroB")}</span></h1>
+            <h1 className="mt-4 text-4xl font-extrabold leading-[1.1] md:text-5xl"><span className="hero-heading-script">{t("heroA")}</span> <span className="text-hero">{t("heroB")}</span></h1>
             <p className="mt-3 max-w-md text-base text-muted-foreground">{t("heroSub")}</p>
             <div className="mt-6 flex flex-wrap gap-3">
-              <a href="#courses" className="inline-flex items-center gap-2 rounded-lg bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground shadow-3d transition hover:-translate-y-0.5">{t("ctaCourse")} <ArrowRight className="h-4 w-4" /></a>
-              <a href="#help" className="inline-flex items-center gap-2 rounded-lg border bg-card px-5 py-2.5 text-sm font-semibold transition hover:bg-muted">{t("ctaHelp")}</a>
+              <a href="#courses" className="inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground shadow-3d transition hover:-translate-y-0.5">{t("ctaCourse")} <ArrowRight className="h-4 w-4" /></a>
+              <a href="#help" className="inline-flex items-center gap-2 rounded-full border bg-card px-6 py-3 text-sm font-semibold transition hover:bg-muted">{t("ctaHelp")}</a>
             </div>
             <div className="mt-8 grid max-w-md grid-cols-4 gap-3">
               {stats.map(([n, k]) => (
@@ -133,7 +142,7 @@ function Index() {
               ))}
             </div>
           </div>
-          <div className="grid place-items-center" data-reveal data-direction="right"><HeroScene /></div>
+          <div className="grid place-items-center" data-reveal data-direction="right" style={{ ["--reveal-delay" as string]: "180ms" }}><HeroScene /></div>
         </div>
         <a href="#courses" className="relative mx-auto mb-6 flex flex-col items-center gap-1 text-xs text-muted-foreground hover:text-foreground">
           {t("scroll")} <ChevronDown className="h-4 w-4 animate-bounce" />
@@ -169,8 +178,8 @@ function Index() {
           <div>
             <SectionHead eyebrow={t("matEyebrow")} title={t("matTitle")} sub={t("matSub")} />
             <div className="mt-6 grid grid-cols-2 gap-3 lg:grid-cols-4">
-              {material.map(([Icon, a, b]) => (
-                <div key={a} className="flex items-start gap-2.5 rounded-lg border bg-card p-3">
+              {material.map(([Icon, a, b], i) => (
+                <div key={a} className="flex items-start gap-2.5 rounded-lg border bg-card p-3" data-reveal data-direction="left" style={{ ["--reveal-delay" as string]: `${i * 60}ms` }}>
                   <Icon className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
                   <div><p className="text-sm font-semibold">{t(a)}</p><p className="text-xs text-muted-foreground">{t(b)}</p></div>
                 </div>
@@ -178,7 +187,7 @@ function Index() {
             </div>
           </div>
           </div>
-        <div className="mx-auto mt-8 max-w-6xl px-5"><LessonDemo /></div>
+        <div className="mx-auto mt-8 max-w-6xl px-5" data-reveal><LessonDemo /></div>
       </section>
 
       <section id="how" className="scroll-mt-14 py-14" data-reveal>
@@ -201,16 +210,16 @@ function Index() {
           <div>
             <SectionHead eyebrow={t("helpEyebrow")} title={t("helpTitle")} sub={t("helpSub")} />
             <div className="mt-5 grid gap-3 sm:grid-cols-2 md:grid-cols-1 lg:grid-cols-2">
-              <div className="flex items-start gap-2.5 rounded-lg border bg-card p-3"><Mail className="mt-0.5 h-4 w-4 text-primary" /><div><p className="text-sm font-semibold">{t("emailSupport")}</p><p className="text-xs text-muted-foreground">{t("emailSupportD")}</p></div></div>
-              <div className="flex items-start gap-2.5 rounded-lg border bg-card p-3"><MessageSquare className="mt-0.5 h-4 w-4 text-primary" /><div><p className="text-sm font-semibold">{t("liveChat")}</p><p className="text-xs text-muted-foreground">{t("liveChatD")}</p></div></div>
+              <div className="flex items-start gap-2.5 rounded-lg border bg-card p-3" data-reveal data-direction="left"><Mail className="mt-0.5 h-4 w-4 text-primary" /><div><p className="text-sm font-semibold">{t("emailSupport")}</p><p className="text-xs text-muted-foreground">{t("emailSupportD")}</p></div></div>
+              <div className="flex items-start gap-2.5 rounded-lg border bg-card p-3" data-reveal data-direction="left" style={{ ["--reveal-delay" as string]: "80ms" }}><MessageSquare className="mt-0.5 h-4 w-4 text-primary" /><div><p className="text-sm font-semibold">{t("liveChat")}</p><p className="text-xs text-muted-foreground">{t("liveChatD")}</p></div></div>
             </div>
-            <Faq />
+            <div data-reveal><Faq /></div>
           </div>
-          <HelpForm />
+          <div data-reveal data-direction="right"><HelpForm /></div>
         </div>
       </section>
 
-      <footer className="border-t py-6">
+      <footer className="border-t py-6" data-reveal>
         <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-2 px-5 text-xs text-muted-foreground sm:flex-row">
           <p>© 2026 ShikshaVerse. {t("rights")}</p>
           <div className="flex gap-5">{nav.map(([id, l]) => <a key={id} href={`#${id}`} className="hover:text-foreground">{l}</a>)}</div>

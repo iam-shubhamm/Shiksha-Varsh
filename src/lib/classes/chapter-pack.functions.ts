@@ -37,13 +37,20 @@ function fallbackPack(title: string, hindi: boolean): ChapterPack {
     `Answer sample questions using complete and exam-friendly sentences.`,
     `Revise the chapter summary and the examples before attempting the quiz.`,
   ];
-  const quiz = Array.from({ length: 15 }, (_, i) => ({
-    q: hindi ? `${title} से संबंधित मूल अवधारणा का कौन-सा कथन सही है?` : `Which statement is correct for the main idea of ${title}?`,
-    options: hindi
-      ? ["मुख्य अवधारणा को समझना सीखना है", "केवल नाम रटना है", "कोई विषय नहीं है", "केवल चित्र ही सब हैं"]
-      : ["We should understand the main concept", "We should only memorise names", "The chapter has no topic", "Only pictures are important"],
-    answer: i % 4,
-  }));
+  const correct = hindi ? "मुख्य अवधारणा को समझना सीखना है" : "Understand the chapter's main idea";
+  const distractors = hindi
+    ? ["केवल नाम रटना है", "कोई विषय नहीं है", "केवल चित्र ही सब हैं"]
+    : ["Only memorise names", "The chapter has no topic", "Only pictures are important"];
+  const quiz = Array.from({ length: 15 }, (_, i) => {
+    const answer = i % 4;
+    const options = [...distractors];
+    options.splice(answer, 0, correct);
+    return {
+      q: hindi ? `${title} से संबंधित मूल अवधारणा का कौन-सा कथन सही है?` : `Which statement is correct for the main idea of ${title}?`,
+      options,
+      answer,
+    };
+  });
   return { notes, quiz };
 }
 
@@ -84,7 +91,12 @@ ${hindi ? "Write everything in Hindi (Devanagari)." : "Write in simple English."
       const pack = m ? JSON.parse(m[0]) : null;
       if (!valid(pack)) return fallbackPack(title, hindi);
       const clean: ChapterPack = { notes: pack.notes.map(String), quiz: pack.quiz.slice(0, 15) };
-      await supabaseAdmin.from("chapter_packs").upsert({ key, grade, board: curriculum, subject: sub.id, chapter: title, notes: clean.notes, quiz: clean.quiz });
+      try {
+        const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+        await supabaseAdmin.from("chapter_packs").upsert({ key, grade, board: curriculum, subject: sub.id, chapter: title, notes: clean.notes, quiz: clean.quiz });
+      } catch (e) {
+        console.warn("chapter_pack cache unavailable", e);
+      }
       return clean;
     } catch (e) {
       console.error("getChapterPack failed", e);

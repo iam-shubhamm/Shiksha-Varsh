@@ -25,8 +25,8 @@ export function ClassBoardPicker({ grade, onSelect }: { grade: number; onSelect?
   if (grade >= 4) return <UpperPicker grade={grade} />;
   const theme = themes[grade as 1 | 2 | 3];
   return <main className="overflow-hidden bg-background px-5 pb-10 pt-4 text-foreground">
-    <div className="mx-auto max-w-5xl">
-      <div className="flex items-center justify-center gap-3 md:gap-6">
+    <div className="mx-auto max-w-5xl rounded-3xl border border-primary/10 bg-gradient-to-br from-card via-background to-accent/20 p-4 shadow-sm sm:p-8">
+      <div className="flex items-center justify-center gap-3 md:gap-6" data-reveal data-direction="left">
         <div className="relative w-20 shrink-0 sm:w-28 md:w-36">
           <img src={theme.image} width={992} height={672} alt={grade === 1 ? "Teddy bear and rabbit playmates" : grade === 2 ? "Owl and backpack explorers" : "Young astronaut discovering the world"} className={`${theme.motion} aspect-[31/21] w-full rounded-lg object-contain`} />
           <span aria-hidden="true" className={`class-mascot-spark ${theme.motion} absolute -right-1 -top-2 text-xl`}>{theme.symbols[0]}</span>
@@ -36,19 +36,20 @@ export function ClassBoardPicker({ grade, onSelect }: { grade: number; onSelect?
           <p className="mt-2 text-xs font-bold text-muted-foreground md:text-sm">{theme.welcome}</p>
         </div>
       </div>
-      <div className="mt-5 text-center md:mt-7">
+      <div className="mt-5 text-center md:mt-7" data-reveal>
         <h2 className="font-display text-xl font-bold md:text-3xl">अपना Board चुनो! 👋</h2>
         <p className="mt-1 text-sm text-muted-foreground">Choose your school board</p>
       </div>
       <div className="mt-5 grid gap-3 sm:grid-cols-3 md:mt-6 md:gap-5">
-        {boardOptions.map(board => {
+        {boardOptions.map((board, index) => {
           const content = <><span aria-hidden="true" className="class-board-symbol text-3xl sm:text-4xl">{board.emoji}</span><span className="min-w-0 flex-1 sm:w-full"><span className="block font-display text-xl font-bold text-primary md:text-2xl">{board.name}</span><span className="mt-1 block text-xs text-muted-foreground">{board.full}</span><span className="mt-1 block text-xs font-bold text-primary sm:mt-3">⭐ {board.label}</span></span><span aria-hidden="true" className="text-xl text-primary sm:hidden">→</span></>;
-          const classes = "group flex h-auto min-h-24 w-full items-center justify-start gap-4 whitespace-normal rounded-lg border-2 border-border bg-card px-4 py-3 text-left shadow-pop transition duration-200 hover:-translate-y-1 hover:border-primary sm:min-h-48 sm:flex-col sm:justify-center sm:gap-3 sm:p-5 sm:text-center";
-          if (grade === 3 && isAvailableBoard(board.id)) return <Button key={board.id} asChild variant="plain" className={classes}><Link to="/class3/$board" params={{ board: board.id }} preload="intent">{content}</Link></Button>;
-          return <Button key={board.id} variant="plain" className={classes} onClick={() => { if (isAvailableBoard(board.id)) onSelect?.(board.id); }}>{content}</Button>;
+          const classes = "group flex h-auto min-h-24 w-full items-center justify-start gap-4 whitespace-normal rounded-2xl border border-border bg-background/80 px-4 py-3 text-left shadow-sm transition duration-200 hover:-translate-y-1 hover:border-primary hover:shadow-3d sm:min-h-48 sm:flex-col sm:justify-center sm:gap-3 sm:p-5 sm:text-center";
+          const delay = { ["--reveal-delay" as string]: `${index * 80}ms` };
+          if (grade === 3 && isAvailableBoard(board.id)) return <Button key={board.id} asChild variant="plain" className={classes} data-reveal data-direction="scale" style={delay}><Link to="/class3/$board" params={{ board: board.id }} preload="intent">{content}</Link></Button>;
+          return <Button key={board.id} variant="plain" className={classes} data-reveal data-direction="scale" style={delay} onClick={() => { if (isAvailableBoard(board.id)) onSelect?.(board.id); }}>{content}</Button>;
         })}
       </div>
-      <div className="mt-5 flex flex-wrap justify-center gap-x-4 gap-y-2 text-xs font-semibold text-muted-foreground">{theme.topics.map(t => <span key={t}>{t}</span>)}</div>
+      <div className="mt-6 flex flex-wrap justify-center gap-2 text-xs font-semibold text-muted-foreground" data-reveal>{theme.topics.map(t => <span key={t} className="rounded-full border border-border bg-background/80 px-3 py-1.5">{t}</span>)}</div>
     </div>
   </main>;
 }
@@ -58,8 +59,8 @@ function UpperPicker({ grade }: { grade: number }) {
   if (!theme) return null;
   const mature = grade >= 8;
   return <main className="overflow-hidden bg-background px-5 pb-10 pt-4 text-foreground">
-    <div className="mx-auto max-w-5xl">
-      <div className="flex items-center justify-center gap-4 md:gap-6">
+    <div className="mx-auto max-w-5xl rounded-3xl border border-primary/10 bg-gradient-to-br from-card via-background to-accent/20 p-4 shadow-sm sm:p-8">
+      <div className="flex items-center justify-center gap-4 md:gap-6" data-reveal data-direction="left">
         <div className={`grade-emblem ${theme.motion} relative grid h-20 w-20 shrink-0 place-items-center rounded-full border-2 border-primary bg-card text-4xl shadow-pop sm:h-24 sm:w-24 md:h-28 md:w-28 md:text-5xl`}>
           <span aria-hidden="true">{theme.emblem}</span>
           <span aria-hidden="true" className="grade-satellite absolute text-lg">{theme.symbols[0]}</span>
@@ -69,13 +70,13 @@ function UpperPicker({ grade }: { grade: number }) {
           <p className="mt-2 text-xs font-bold text-muted-foreground md:text-sm">{theme.welcome}</p>
         </div>
       </div>
-      <div className="mt-5 text-center md:mt-7">
+      <div className="mt-5 text-center md:mt-7" data-reveal>
         <h2 className="font-display text-xl font-bold md:text-3xl">{mature ? "Select your board" : "अपना Board चुनो!"}</h2>
         <p className="mt-1 text-sm text-muted-foreground">{mature ? "Chapter-wise study resources" : "Choose your school board"}</p>
       </div>
       <div className="mt-5 grid gap-3 sm:grid-cols-3 md:mt-6 md:gap-5">
-        {boardOptions.map((board) => (
-          <Button key={board.id} asChild variant="plain" className="group flex h-auto min-h-24 w-full items-center justify-start gap-4 whitespace-normal rounded-lg border-2 border-border bg-card px-4 py-3 text-left shadow-pop transition duration-200 hover:-translate-y-1 hover:border-primary sm:min-h-44 sm:flex-col sm:justify-center sm:gap-3 sm:p-5 sm:text-center">
+        {boardOptions.map((board, index) => (
+          <Button key={board.id} asChild variant="plain" data-reveal data-direction="scale" style={{ ["--reveal-delay" as string]: `${index * 80}ms` }} className="group flex h-auto min-h-24 w-full items-center justify-start gap-4 whitespace-normal rounded-2xl border border-border bg-background/80 px-4 py-3 text-left shadow-sm transition duration-200 hover:-translate-y-1 hover:border-primary hover:shadow-3d sm:min-h-44 sm:flex-col sm:justify-center sm:gap-3 sm:p-5 sm:text-center">
             <Link to="/study/$grade/$board" params={{ grade: String(grade), board: board.id }} preload="intent">
               <span aria-hidden="true" className="class-board-symbol text-3xl sm:text-4xl">{board.emoji}</span>
               <span className="min-w-0 flex-1 sm:w-full"><span className="block font-display text-xl font-bold text-primary md:text-2xl">{board.name}</span><span className="mt-1 block text-xs text-muted-foreground">{board.full}</span><span className="mt-1 block text-xs font-bold text-primary sm:mt-3">{grade >= 9 ? (board.id === "icse" ? "📘 CISCE syllabus" : "📗 NCERT textbooks") : `⭐ ${board.label}`}</span></span>
@@ -84,7 +85,7 @@ function UpperPicker({ grade }: { grade: number }) {
           </Button>
         ))}
       </div>
-      <div className="mt-5 flex flex-wrap justify-center gap-x-4 gap-y-2 text-xs font-semibold text-muted-foreground">{theme.topics.map((t) => <span key={t}>{t}</span>)}</div>
+      <div className="mt-6 flex flex-wrap justify-center gap-2 text-xs font-semibold text-muted-foreground" data-reveal>{theme.topics.map((t) => <span key={t} className="rounded-full border border-border bg-background/80 px-3 py-1.5">{t}</span>)}</div>
     </div>
   </main>;
 }

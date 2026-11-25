@@ -50,11 +50,11 @@ export function ChapterView({ grade, board, subject, idx, step, lang, advanced }
   const body = isLoading ? <p className="mt-4 animate-pulse rounded-lg bg-muted p-6 text-center text-muted-foreground">📚 Chapter tayaar ho raha hai… (pehli baar kuch samay lag sakta hai)</p>
     : !pack ? <div className="mt-4 rounded-lg border-2 border-dashed border-primary/30 bg-muted p-6 text-center">Notes abhi load nahi hue. <Button variant="plain" disabled={isFetching} onClick={() => refetch()} className="h-auto ml-2 rounded-full bg-primary px-4 py-1 font-bold text-primary-foreground">{isFetching ? "Loading…" : "Try again"}</Button></div>
     : null;
-  if (step === "quiz") return <div><h2 className="font-display text-2xl font-bold">🧠 {title}</h2>{body ?? <QuizLevels pack={pack as ChapterPack} />}</div>;
+  if (step === "quiz") return <div><h2 data-reveal className="font-display text-2xl font-bold">🧠 {title}</h2>{body ?? <QuizLevels pack={pack as ChapterPack} />}</div>;
   return (
     <div>
-      <p className="text-sm text-muted-foreground">{advanced?.label ?? `Class ${grade} · ${UPPER_BOARDS[board]}`} · {subject.name}</p>
-      <h2 className="font-display text-2xl font-bold">{step === "lecture" ? "📺" : "📄"} Chapter {idx + 1}: {title}</h2>
+      <p data-reveal className="text-sm text-muted-foreground">{advanced?.label ?? `Class ${grade} · ${UPPER_BOARDS[board]}`} · {subject.name}</p>
+      <h2 data-reveal className="font-display text-2xl font-bold">{step === "lecture" ? "📺" : "📄"} Chapter {idx + 1}: {title}</h2>
       {step === "lecture" && <VideoPlayer lang={lang === "hi" ? "hi" : "en"} {...lectureSearch(grade, subject, title, advanced)} />}
       {step === "pdf"
         ? body ?? <PdfPreview pack={pack as ChapterPack} title={title} grade={grade} subject={subject.name} lang={subject.id === "hindi" ? "en" : lang} />
@@ -73,10 +73,10 @@ function PdfPreview({ pack, title, grade, subject, lang }: { pack: ChapterPack; 
           <span className="text-xl">📄</span>
           <div><p className="text-xs font-bold uppercase tracking-wider">ShikshaVerse notes</p><p className="font-display font-bold">Class {grade} · {subject}</p></div>
         </div>
-        <div className="p-5 print:p-0">
+        <div className="p-5 print:p-0" data-reveal>
           <h3 className="font-display text-2xl font-bold">{title}</h3>
           {loading ? <p className="mt-4 text-sm text-muted-foreground">Notes translate ho rahe hain…</p> : (
-            <ol className="mt-4 grid gap-3">{texts.map((note, i) => <li key={i} className="rounded-lg border border-border bg-muted/60 p-3"><span className="mr-2 font-bold text-primary">{i + 1}.</span>{note}</li>)}</ol>
+            <ol className="mt-4 grid gap-3">{texts.map((note, i) => <li key={i} data-reveal data-direction="left" style={{ ["--reveal-delay" as string]: `${i * 45}ms` }} className="rounded-2xl border border-primary/10 bg-muted/60 p-3"><span className="mr-2 font-bold text-primary">{i + 1}.</span>{note}</li>)}</ol>
           )}
         </div>
       </div>
@@ -106,11 +106,11 @@ function Notes({ notes, lang }: { notes: string[]; lang: LectureLang }) {
   if (loading) return <p className="mt-4 text-sm text-muted-foreground">हिंदी में बदल रहे हैं…</p>;
   return (
     <div className="mt-5">
-      <div className="flex items-center justify-between gap-2 print:hidden">
+      <div className="flex items-center justify-between gap-2 print:hidden" data-reveal>
         <h3 className="font-display text-xl font-bold">📝 Notes</h3>
         <Button variant="plain" onClick={listen} aria-pressed={speaking} className="h-auto rounded-full border-2 border-primary px-4 py-1.5 text-sm font-bold text-primary">{speaking ? "⏹ Stop audio" : "🔊 Listen"}</Button>
       </div>
-      <ul className="mt-3 space-y-3">{texts.map((n, i) => <li key={i} className="flex gap-3 rounded-lg bg-muted p-3"><span className="font-bold text-primary">{i + 1}.</span>{n}</li>)}</ul>
+      <ul className="mt-3 space-y-3">{texts.map((n, i) => <li key={i} data-reveal data-direction="left" style={{ ["--reveal-delay" as string]: `${i * 45}ms` }} className="flex gap-3 rounded-2xl border border-primary/10 bg-muted/70 p-3"><span className="font-bold text-primary">{i + 1}.</span>{n}</li>)}</ul>
     </div>
   );
 }
@@ -166,7 +166,7 @@ function Quiz({ quiz }: { quiz: ChapterPack["quiz"] }) {
     <div>
       <div className="space-y-5">
         {quiz.map((q, qi) => (
-          <div key={qi} className="rounded-lg border-2 border-border bg-card p-4">
+          <div key={qi} data-reveal data-direction="scale" style={{ ["--reveal-delay" as string]: `${qi * 45}ms` }} className="rounded-2xl border border-primary/10 bg-card/80 p-4 shadow-sm">
             <p className="font-semibold">{qi + 1}. {q.q}</p>
             <div className="mt-2 grid gap-2 sm:grid-cols-2">
               {q.options.map((o, oi) => {

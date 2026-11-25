@@ -39,9 +39,31 @@ const boards = {
 } as const;
 type BoardKey = keyof typeof boards;
 
-function useStored<T>(key: string, init: T) {
+function isBoardSelection(value: unknown): value is BoardKey | "" {
+  return value === "" || (typeof value === "string" && Object.prototype.hasOwnProperty.call(boards, value));
+}
+
+function isStringArray(value: unknown): value is string[] {
+  return Array.isArray(value) && value.every((item) => typeof item === "string");
+}
+
+function isScoreMap(value: unknown): value is Record<string, number> {
+  return typeof value === "object" && value !== null && !Array.isArray(value) && Object.values(value).every((score) => typeof score === "number" && Number.isFinite(score));
+}
+
+function useStored<T>(key: string, init: T, isValid: (value: unknown) => value is T) {
   const [v, setV] = useState<T>(init);
-  useEffect(() => { const s = localStorage.getItem(key); if (s) { try { setV(JSON.parse(s)); } catch { localStorage.removeItem(key); } } }, [key]);
+  useEffect(() => {
+    const stored = localStorage.getItem(key);
+    if (!stored) return;
+    try {
+      const parsed: unknown = JSON.parse(stored);
+      if (isValid(parsed)) setV(parsed);
+      else localStorage.removeItem(key);
+    } catch {
+      localStorage.removeItem(key);
+    }
+  }, [isValid, key]);
   const set = (n: T) => { setV(n); localStorage.setItem(key, JSON.stringify(n)); };
   return [v, set] as const;
 }
@@ -57,16 +79,16 @@ function printNote(n: Note, label: string) {
 const SUBJ_EMOJI: Record<string, string> = { English: "🔤", Maths: "🔢", Hindi: "📖", EVS: "🌱" };
 
 function Index() {
-  const [board, setBoard] = useStored<BoardKey | "">("c2-board", "");
-  const [done, setDone] = useStored<string[]>("c2-done", []);
-  const [bestAll, setBestAll] = useStored<Record<string, number>>("c2-best-levels", {});
+  const [board, setBoard] = useStored<BoardKey | "">("c2-board", "", isBoardSelection);
+  const [done, setDone] = useStored<string[]>("c2-done", [], isStringArray);
+  const [bestAll, setBestAll] = useStored<Record<string, number>>("c2-best-levels", {}, isScoreMap);
   const [tab, setTab] = useState<"lectures" | "notes" | "quiz">("lectures");
   const [open, setOpen] = useState<Lecture | null>(null);
   const [level, setLevel] = useState<Level>("easy");
   const [qSubject, setQSubject] = useState<QuizSubject | null>(null);
   const [practice, setPractice] = useState<Record<number, number>>({});
   const [note, setNote] = useState<Note | null>(null);
-  const [lang, setLang] = useLectureLang();
+  const [lang, setLang] = useLectureLang(qSubject?.toLowerCase() === "hindi" ? "hi" : "en");
   const [answers, setAnswers] = useState<Record<number, number>>({});
   const [submitted, setSubmitted] = useState(false);
 
@@ -81,7 +103,7 @@ function Index() {
     setSubmitted(true); if (score > (bestAll[qKey] ?? 0)) setBestAll({ ...bestAll, [qKey]: score });
   };
 
-  if (!board) return <><AllCoursesLink /><ClassBoardPicker grade={2} onSelect={setBoard} /></>;
+  if (!board || !boards[board]) return <><AllCoursesLink /><ClassBoardPicker grade={2} onSelect={setBoard} /></>;
   const b = boards[board];
 
   return (
@@ -91,11 +113,12 @@ function Index() {
           {qSubject ? `← ${b.name} subjects` : "← All boards"}
         </Button>
         {!qSubject ? (<>
-          <h1 className="mt-2 text-center font-display text-3xl font-extrabold text-primary">🎒 Class 2 Corner · {b.name}</h1>
-          <div className="mt-10 grid gap-5 sm:grid-cols-2 md:grid-cols-3">
-            {quizSubjects.map((sub) => (
+          <h1 data-reveal className="mt-3 rounded-3xl border border-primary/10 bg-gradient-to-r from-primary/10 via-accent/20 to-secondary/10 px-4 py-7 text-center font-display text-3xl font-extrabold text-primary">🎒 Class 2 Corner · {b.name}</h1>
+          <div className="mt-8 grid gap-5 sm:grid-cols-2 md:grid-cols-3">
+            {quizSubjects.map((sub, i) => (
               <Button variant="plain" key={sub} onClick={() => { setQSubject(sub); setTab("lectures"); setAnswers({}); setSubmitted(false); }}
-                className="h-auto whitespace-normal flex-col rounded-lg border-2 border-border bg-card p-6 text-center shadow-pop transition hover:-translate-y-1 hover:border-primary">
+                data-reveal data-direction="scale" style={{ ["--reveal-delay" as string]: `${i * 70}ms` }}
+                className="h-auto whitespace-normal flex-col rounded-2xl border border-primary/10 bg-card/80 p-6 text-center shadow-sm transition hover:-translate-y-1 hover:border-primary hover:shadow-3d">
                 <span className="class-cartoon-explore text-5xl">{SUBJ_EMOJI[sub] ?? "📘"}</span>
                 <span className="mt-3 block font-display text-2xl font-bold">{sub}</span>
                 <span className="block text-sm text-muted-foreground">{lectures.filter((l) => l.subject === sub).length} lessons</span>
@@ -103,26 +126,27 @@ function Index() {
             ))}
           </div>
         </>) : (<>
-          <h1 className="mt-2 font-display text-4xl font-extrabold">{SUBJ_EMOJI[qSubject] ?? "📘"} {qSubject}</h1>
-          <div className="mt-4"><LectureLangToggle lang={lang} onChange={setLang} /></div>
-          <div role="tablist" className="mt-3 grid grid-cols-3 gap-2 rounded-lg bg-muted p-2">
+          <h1 data-reveal className="mt-3 rounded-3xl border border-primary/10 bg-gradient-to-r from-primary/10 via-accent/20 to-secondary/10 px-4 py-6 font-display text-3xl font-extrabold sm:text-4xl">{SUBJ_EMOJI[qSubject] ?? "📘"} {qSubject}</h1>
+          <div className="mt-4" data-reveal><LectureLangToggle lang={lang} onChange={setLang} /></div>
+          <div role="tablist" data-reveal className="mt-3 grid grid-cols-3 gap-2 rounded-2xl border border-border bg-card/70 p-2">
             {([["lectures", "🎬 Lectures"], ["notes", "📄 PDF Notes"], ["quiz", "🧩 Quiz"]] as const).map(([k, t]) => (
               <Button variant="plain" key={k} role="tab" aria-selected={tab === k} onClick={() => setTab(k)}
-                className={`h-auto whitespace-normal rounded-lg py-3 font-display text-sm font-bold sm:text-2xl ${tab === k ? "bg-primary text-primary-foreground shadow-pop" : "hover:bg-card"}`}>{t}</Button>
+                className={`h-auto whitespace-normal rounded-xl py-3 font-display text-sm font-bold sm:text-2xl ${tab === k ? "bg-primary text-primary-foreground shadow-pop" : "hover:bg-muted"}`}>{t}</Button>
             ))}
           </div>
-          <section className="mt-6 space-y-2 py-6">
+          <section className="mt-6 space-y-3 py-6" data-reveal>
             {board === "cbse" && <PrimaryTextbook key={`${qSubject}-${tab}`} grade={2} subject={qSubject} step={tab === "lectures" ? "lecture" : tab === "notes" ? "pdf" : "quiz"} lang={lang} />}
             {tab === "lectures" && lectures.filter((l) => l.subject === qSubject).map((l, i) => (
               <Button variant="plain" key={l.id} onClick={() => openLecture(l)}
-                className="h-auto whitespace-normal flex w-full items-center justify-start gap-3 rounded-lg border-2 border-border bg-card px-4 py-4 text-left font-semibold shadow-pop hover:border-primary">
+                data-reveal style={{ ["--reveal-delay" as string]: `${i * 50}ms` }}
+                className="h-auto whitespace-normal flex w-full items-center justify-start gap-3 rounded-2xl border border-primary/10 bg-card/80 px-4 py-4 text-left font-semibold shadow-sm transition hover:border-primary hover:shadow-3d">
                 <span className="text-xl">📺</span>
                 <span className="flex-1"><span className="block font-display text-lg font-bold">Lesson {i + 1}</span><span className="block text-sm text-muted-foreground">{l.title}</span></span>
                 {done.includes(l.id) && <span className="rounded-full bg-success px-3 py-1 text-xs font-bold text-primary-foreground">✓ Done</span>}
               </Button>
             ))}
             {tab === "notes" && notes.filter((x) => x.subject === qSubject && (!x.boards || x.boards.includes(board))).map((x, i) => (
-              <div key={x.id} className="flex flex-wrap items-center gap-3 rounded-lg border-2 border-border bg-card px-4 py-4 shadow-pop">
+              <div key={x.id} data-reveal style={{ ["--reveal-delay" as string]: `${i * 50}ms` }} className="flex flex-wrap items-center gap-3 rounded-2xl border border-primary/10 bg-card/80 px-4 py-4 shadow-sm">
                 <span className="text-xl">📄</span>
                 <span className="flex-1"><span className="block font-display text-lg font-bold">Lesson {i + 1} PDF</span><span className="block text-sm text-muted-foreground">{x.title}</span></span>
                 <Button variant="plain" onClick={() => setNote(x)} className="h-auto rounded-full bg-muted px-4 py-1.5 text-sm font-bold">👁 View</Button>
@@ -140,7 +164,7 @@ function Index() {
               </div>
               <div className="mt-6 space-y-5">
                 {questions.map((q, i) => (
-                  <div key={i} className="rounded-lg border-2 border-border bg-card p-6">
+                  <div key={i} data-reveal style={{ ["--reveal-delay" as string]: `${i * 50}ms` }} className="rounded-2xl border border-primary/10 bg-card/80 p-6 shadow-sm">
                     <p className="text-lg font-bold">{i + 1}. {q.q}</p>
                     <div className="mt-3 flex flex-wrap gap-3">
                       {q.options.map((o, j) => {

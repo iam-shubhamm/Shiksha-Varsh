@@ -11,7 +11,7 @@ export type Lang = keyof typeof LANGS;
 const dict = {
   en: {
     navCourses: "Courses", navFeatures: "Features", navHelp: "Help", light: "Light", dark: "Dark", language: "Language",
-    badge: "From Class 1 to Graduation", heroA: "A new world of", heroB: "learning",
+    badge: "From Class 1 to Graduation", heroA: "A new world of", heroB: "Learning",
     heroSub: "Pick your course and jump straight to your lectures — simple, fast and reliable.",
     ctaCourse: "Choose course", ctaHelp: "Get help",
     coursesEyebrow: "Courses", coursesTitle: "Choose your class or course",
@@ -34,7 +34,7 @@ const dict = {
     eName: "Please enter your name", eEmail: "Please enter a valid email", eMsg: "Please describe your issue in a bit more detail", eFail: "Couldn't send, please try again.",
     doneT: "Message received!", doneD: "Our team will get back to you soon.", again: "Send another message",
     soon: "link coming soon", rights: "All rights reserved.",
-    chatHi: "Hi! 👋 I'm your assistant. Ask me anything.", chatThanks: "Thanks! Your message will reach our team.", chatPh: "Type your question...",
+    chatHi: "Hi! How can I help you?", chatThanks: "Thanks! Your message will reach our team.", chatPh: "Type your question...",
     chatTitle: "Help Center", tabAi: "AI Assist / Live Chat", tabHelp: "Help",
     navHome: "Home", navMaterial: "Study Material", navHow: "How it works", login: "Login", logout: "Logout", scroll: "Scroll to explore",
     s1: "Courses", s2: "Lesson-wise quizzes", s3: "Free PDF & notes", s4: "Languages",
@@ -79,7 +79,7 @@ const dict = {
     eName: "नाम लिखें", eEmail: "सही email लिखें", eMsg: "अपनी समस्या थोड़ा विस्तार से लिखें", eFail: "भेजने में समस्या हुई, फिर से कोशिश करें।",
     doneT: "आपका संदेश मिल गया!", doneD: "हमारी टीम जल्द ही आपसे संपर्क करेगी।", again: "एक और संदेश भेजें",
     soon: "link जल्द जोड़ा जाएगा", rights: "सर्वाधिकार सुरक्षित।",
-    chatHi: "नमस्ते! 👋 मैं आपकी सहायक हूँ। कुछ भी पूछिए।", chatThanks: "धन्यवाद! आपका संदेश हमारी टीम तक पहुँचेगा।", chatPh: "अपना सवाल लिखें...",
+    chatHi: "नमस्ते! मैं आपकी क्या मदद कर सकती हूँ?", chatThanks: "धन्यवाद! आपका संदेश हमारी टीम तक पहुँचेगा।", chatPh: "अपना सवाल लिखें...",
     chatTitle: "Help Center", tabAi: "AI Assist / Live Chat", tabHelp: "मदद",
     navHome: "होम", navMaterial: "पढ़ाई सामग्री", navHow: "कैसे काम करता है", login: "Login", logout: "Logout", scroll: "नीचे scroll करें",
     s1: "कोर्स", s2: "पाठ-वार क्विज़", s3: "PDF और नोट्स", s4: "भाषाएँ",

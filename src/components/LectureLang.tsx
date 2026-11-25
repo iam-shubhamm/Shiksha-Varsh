@@ -6,9 +6,12 @@ import { translateTexts } from "@/lib/classes/translate.functions";
 export type LectureLang = "en" | "hi";
 const KEY = "lecture-lang";
 
-export function useLectureLang() {
-  const [lang, setLang] = useState<LectureLang>("en");
-  useEffect(() => { if (localStorage.getItem(KEY) === "hi") setLang("hi"); }, []);
+export function useLectureLang(defaultLang: LectureLang = "en") {
+  const [lang, setLang] = useState<LectureLang>(defaultLang);
+  useEffect(() => {
+    const saved = localStorage.getItem(KEY);
+    setLang(saved === "en" || saved === "hi" ? saved : defaultLang);
+  }, [defaultLang]);
   const set = (l: LectureLang) => { setLang(l); localStorage.setItem(KEY, l); };
   return [lang, set] as const;
 }

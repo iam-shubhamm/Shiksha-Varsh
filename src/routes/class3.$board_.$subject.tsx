@@ -45,7 +45,7 @@ function SubjectPage() {
   const [step, setStep] = useState<Step>("lecture");
   const [printAll, setPrintAll] = useState(false);
   const { t } = useLang();
-  const [lang, setLang] = useLectureLang();
+  const [lang, setLang] = useLectureLang(subject?.id === "hindi" ? "hi" : "en");
   if (!board || !subject) return null;
   const chapter = subject.chapters.find((c) => c.id === chapterId);
 
@@ -54,7 +54,7 @@ function SubjectPage() {
       <Link to="/class3/$board" params={{ board: bId }} className="h-auto whitespace-normal text-sm font-semibold text-primary print:hidden">
         ← {board.id === "bihar" ? t("bihar") : board.name} {t("subjectsBack")}
       </Link>
-      <div className="h-auto whitespace-normal mt-2 flex flex-wrap items-center justify-between gap-3 print:hidden">
+      <div className="h-auto whitespace-normal mt-2 flex flex-wrap items-center justify-between gap-3 print:hidden" data-reveal>
         <h1 className="h-auto whitespace-normal font-display text-4xl font-extrabold">{subject.emoji} {subject.name}</h1>
         <Button variant="plain" onClick={() => { setPrintAll(true); setTimeout(() => { window.print(); setPrintAll(false); }, 50); }}
           className="h-auto whitespace-normal rounded-lg border-2 border-foreground bg-primary px-4 py-2 font-bold text-primary-foreground shadow-pop">
@@ -74,8 +74,8 @@ function SubjectPage() {
       )}
       <div className={printAll ? "print:hidden" : ""}>
 
-      <div className="mt-4 print:hidden"><LectureLangToggle lang={lang} onChange={setLang} /></div>
-      <div role="tablist" className="h-auto whitespace-normal mt-3 grid grid-cols-3 gap-2 rounded-lg bg-muted p-2 print:hidden">
+      <div className="mt-4 print:hidden" data-reveal><LectureLangToggle lang={lang} onChange={setLang} /></div>
+      <div role="tablist" data-reveal className="h-auto whitespace-normal mt-3 grid grid-cols-3 gap-2 rounded-2xl border border-border bg-card/70 p-2 print:hidden">
         {steps.map((s) => (
           <Button variant="plain" key={s.id} role="tab" aria-selected={step === s.id} onClick={() => { setStep(s.id); setChapterId(null); }}
             className={`h-auto whitespace-normal rounded-lg py-3 font-display text-sm font-bold sm:text-2xl ${step === s.id ? "bg-primary text-primary-foreground shadow-pop" : "hover:bg-card"}`}>
@@ -84,12 +84,13 @@ function SubjectPage() {
         ))}
       </div>
 
-      <section className="h-auto whitespace-normal mt-6 py-6 print:border-0">
+      <section className="h-auto whitespace-normal mt-6 py-6 print:border-0" data-reveal>
         {!chapter ? (
           <div className="h-auto whitespace-normal space-y-2">
             {subject.chapters.map((c, i) => (
               <Button variant="plain" key={c.id} onClick={() => setChapterId(c.id)}
-                className="h-auto whitespace-normal flex w-full justify-start items-center gap-3 rounded-lg border-2 border-border bg-card px-4 py-4 text-left font-semibold shadow-pop hover:border-primary">
+                data-reveal data-direction="left" style={{ ["--reveal-delay" as string]: `${i * 40}ms` }}
+                className="h-auto whitespace-normal flex w-full justify-start items-center gap-3 rounded-2xl border border-primary/10 bg-card/80 px-4 py-4 text-left font-semibold shadow-sm transition hover:border-primary hover:shadow-3d">
                 <span className="h-auto whitespace-normal text-xl">{step === "lecture" ? "📺" : step === "pdf" ? "📄" : "🧠"}</span>
                 <span>
                   <span className="h-auto whitespace-normal block font-display text-lg font-bold">Chapter {i + 1}{step === "pdf" ? " PDF" : step === "quiz" ? " Quiz" : ""}</span>
