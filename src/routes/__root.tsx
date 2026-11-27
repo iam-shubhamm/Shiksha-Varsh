@@ -7,12 +7,14 @@ import {
   HeadContent,
   Scripts,
   type ErrorComponentProps,
+  useRouterState,
 } from "@tanstack/react-router";
 import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { I18nProvider } from "../lib/i18n";
 import { HelpWidget } from "../components/HelpWidget";
+import { HelpWidgetProvider } from "../components/HelpWidgetProvider";
 
 function NotFoundComponent() {
   return (
@@ -97,7 +99,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       },
       { rel: "icon", href: "/favicon.svg", type: "image/svg+xml" },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
-      { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Dancing+Script:wght@500;600;700&family=Sora:wght@500;600;700;800&family=Manrope:wght@400;500;600;700;800&family=Hind:wght@400;500;600&display=swap" },
+      {
+        rel: "stylesheet",
+        href: "https://fonts.googleapis.com/css2?family=Dancing+Script:wght@500;600;700&family=Sora:wght@500;600;700;800&family=Manrope:wght@400;500;600;700;800&family=Hind:wght@400;500;600&display=swap",
+      },
     ],
   }),
   shellComponent: RootShell,
@@ -128,13 +133,16 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const pathname = useRouterState({ select: (state) => state.location.pathname });
 
   return (
     <QueryClientProvider client={queryClient}>
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
       <I18nProvider>
-        <Outlet />
-        <HelpWidget />
+        <HelpWidgetProvider pathname={pathname}>
+          <Outlet />
+          <HelpWidget />
+        </HelpWidgetProvider>
       </I18nProvider>
     </QueryClientProvider>
   );

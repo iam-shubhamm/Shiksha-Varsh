@@ -231,7 +231,7 @@ The following distinctions are important when evaluating the project:
 
 - The core course routes, static curriculum navigation, chapter UI, quiz logic, print workflow, authentication flows, help form, and automated tests are implemented in the audited source.
 - Chapter packs and translated text can be generated through TanStack server functions and an optional OpenAI-compatible AI endpoint.
-- The help widget uses scripted local responses; a real AI chat assistant is not wired up.
+- The help widget opens automatically on the homepage and can be opened from the top-bar Help action on other pages. It still uses scripted local responses; a real AI chat assistant is not wired up.
 - Lecture discovery currently parses YouTube search HTML. This is not a stable official API integration and may break if the external page changes.
 - Supabase tables, authentication, migrations, and Cloudflare deployment are configured in the codebase but were not verified against live services.
 - The development video-cache endpoint is intended for development and is disabled outside development mode.
